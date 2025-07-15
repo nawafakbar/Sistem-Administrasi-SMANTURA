@@ -30,21 +30,12 @@ class NilaiSiswaResource extends Resource
 {
     return $form->schema([
         Forms\Components\Select::make('kelas_id')
-            ->label('Kelas')
-            ->options(function (callable $get) {
-                $siswaKelasId = $get('siswa_kelas_id');
-                $siswaKelas = \App\Models\SiswaKelas::with('kelas')->find($siswaKelasId);
+    ->label('Kelas')
+    ->options(function () {
+        return \App\Models\Kelas::all()
+            ->mapWithKeys(fn ($kelas) => [$kelas->id => $kelas->nama_kelas]);
+    }),
 
-                return $siswaKelas
-                    ? [$siswaKelas->kelas->id => $siswaKelas->kelas->nama_kelas]
-                    : [];
-            })
-            ->getOptionLabelUsing(function ($value) {
-                $siswaKelas = \App\Models\SiswaKelas::with('kelas')->find($value);
-                return $siswaKelas?->kelas?->nama_kelas;
-            })
-            ->reactive()
-            ->afterStateUpdated(fn (callable $set) => $set('siswa_kelas_id', null)),
 
         Forms\Components\Select::make('siswa_kelas_id')
             ->label('Siswa')
